@@ -10,7 +10,7 @@ import math
 import numpy as np
 np.random.seed(0)
 import scipy
-
+from tqdm import tqdm
 # OpenRAVE
 import openravepy
 #openravepy.RaveInitialize(True, openravepy.DebugLevel.Debug)
@@ -94,7 +94,7 @@ class RoboHandler:
   def order_grasps(self):
     print 'order_grasps'
     self.grasps_ordered = self.grasps.copy() #you should change the order of self.grasps_ordered
-    for grasp in self.grasps_ordered:
+    for grasp in tqdm(self.grasps_ordered):
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
 
     # sort!
@@ -108,7 +108,7 @@ class RoboHandler:
     print 'noisy_order_grasp'
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
     #TODO set the score with your evaluation function (over random samples) and sort
-    for grasp in self.grasps_ordered_noisy:
+    for grasp in tqdm(self.grasps_ordered_noisy):
       rand_grasp = self.sample_random_grasp(grasp)
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
 
