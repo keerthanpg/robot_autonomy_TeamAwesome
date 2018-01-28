@@ -79,7 +79,7 @@ class RoboHandler:
 
     # create a grasping module
     self.gmodel = openravepy.databases.grasping.GraspingModel(self.robot, self.target_kinbody)
-    
+
     # if you want to set options, e.g. friction
     options = openravepy.options
     options.friction = 0.1
@@ -89,23 +89,24 @@ class RoboHandler:
     self.graspindices = self.gmodel.graspindices
     self.grasps = self.gmodel.grasps
 
-  
+
   # order the grasps - call eval grasp on each, set the 'performance' index, and sort
   def order_grasps(self):
     self.grasps_ordered = self.grasps.copy() #you should change the order of self.grasps_ordered
     for grasp in self.grasps_ordered:
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
-    
+
     # sort!
     order = np.argsort(self.grasps_ordered[:,self.graspindices.get('performance')[0]])
     order = order[::-1]
     self.grasps_ordered = self.grasps_ordered[order]
 
-  
-  # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp 
+
+  # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp
   def order_grasps_noisy(self):
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
     #TODO set the score with your evaluation function (over random samples) and sort
+
 
 
   # function to evaluate grasps
@@ -113,6 +114,7 @@ class RoboHandler:
   # higher score should be a better grasp
   def eval_grasp(self, grasp):
     with self.robot:
+      print("Hello confused ones!")
       #contacts is a 2d array, where contacts[i,0-2] are the positions of contact i and contacts[i,3-5] is the direction
       try:
         contacts,finalconfig,mindist,volume = self.gmodel.testGrasp(grasp=grasp,translate=True,forceclosure=False)
@@ -123,18 +125,22 @@ class RoboHandler:
         for c in contacts:
           pos = c[0:3] - obj_position
           dir = -c[3:] #this is already a unit vector
-          G=np.vstack(dir, np.cross(pos, dir))
-          
           #TODO fill G
-        
+        #   g = np.array([])
+          sed_term = np.cross(pos,dir)
+          g = np.concatenate(dir,sed_term,axis = 0)
+          print g
+          G = np.hstack(G,g)
+          print G
         #TODO use G to compute scrores as discussed in class
+
         return 0.0 #change this
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
         #example: if the hand is already intersecting the object at the initial position/orientation
         return  0.00 # TODO you may want to change this
-      
+
       #heres an interface in case you want to manipulate things more specifically
       #NOTE for this assignment, your solutions cannot make use of graspingnoise
 #      self.robot.SetTransform(np.eye(4)) # have to reset transform in order to remove randomness
@@ -201,5 +207,3 @@ class RoboHandler:
 if __name__ == '__main__':
   robo = RoboHandler()
   #time.sleep(10000) #to keep the openrave window open
-
-  
