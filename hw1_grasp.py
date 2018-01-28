@@ -48,7 +48,7 @@ class RoboHandler:
     self.problem_init()
 
     #order grasps based on your own scoring metric
-    self.order_grasps()
+    # self.order_grasps()
 
     #order grasps with noise
     self.order_grasps_noisy()
@@ -106,10 +106,10 @@ class RoboHandler:
   # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp
   def order_grasps_noisy(self):
     print 'noisy_order_grasp'
-    self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
+    self.grasps_ordered_noisy = self.grasps.copy() #you should change the order of self.grasps_ordered_noisy
     #TODO set the score with your evaluation function (over random samples) and sort
     for grasp in tqdm(self.grasps_ordered_noisy):
-      rand_grasp = self.sample_random_grasp(grasp)
+      grasp = self.sample_random_grasp(grasp)
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
 
     # sort!
@@ -181,8 +181,9 @@ class RoboHandler:
     #sample random position
     RAND_DIST_SIGMA = 0.01 #TODO you may want to change this
     pos_orig = grasp[self.graspindices['igrasppos']]
-
+    # print(grasp[self.graspindices['igrasppos']])
     grasp[self.graspindices['igrasppos']] = np.random.normal(pos_orig, RAND_DIST_SIGMA)
+    # print(grasp[self.graspindices['igrasppos']])
     #sample random orientation
     RAND_ANGLE_SIGMA = np.pi/24 #TODO you may want to change this
     dir_orig = grasp[self.graspindices['igraspdir']]
@@ -218,12 +219,15 @@ if __name__ == '__main__':
   robo = RoboHandler()
   print ("IAM READYYY")
   noisy_grasp = robo.grasps_ordered_noisy[:4]
-  normal_grasp = robo.grasps_ordered[:4]
+  # normal_grasp = robo.grasps_ordered[:4]
+  # grasps = robo.grasps[:4]
+  # for grasp in grasps:
+  #     robo.show_grasp(grasp, delay=10)
   for grasp in noisy_grasp:
       print grasp
-      robo.show_grasp(grasp)
-  for grasp in normal_grasp:
-      print grasp
-      robo.show_grasp(grasp)
+      robo.show_grasp(grasp, delay=10)
+  # for grasp in normal_grasp:
+  #     print grasp
+  #     robo.show_grasp(grasp, delay=10)
 
   #time.sleep(10000) #to keep the openrave window open
