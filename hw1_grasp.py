@@ -114,7 +114,6 @@ class RoboHandler:
   # higher score should be a better grasp
   def eval_grasp(self, grasp):
     with self.robot:
-      print("Hello confused ones!")
       #contacts is a 2d array, where contacts[i,0-2] are the positions of contact i and contacts[i,3-5] is the direction
       try:
         contacts,finalconfig,mindist,volume = self.gmodel.testGrasp(grasp=grasp,translate=True,forceclosure=False)
@@ -125,8 +124,6 @@ class RoboHandler:
         for c in contacts:
           pos = c[0:3] - obj_position
           dir = -c[3:] #this is already a unit vector
-          #TODO fill G
-        #   g = np.array([])
           sed_term = np.cross(pos,dir)
           print(sed_term)
           g = np.concatenate(dir,sed_term)
@@ -134,7 +131,8 @@ class RoboHandler:
           G = np.hstack(G,g)
           print G
         #TODO use G to compute scrores as discussed in class
-
+        Q1 = np.min(np.sqrt(np.linalg.eig(np.dot(G,G.T))[0]))
+        Q2 = np.sqrt(np.linalg.det(np.dot(G,G.T)))
         return 0.0 #change this
 
       except openravepy.planning_error,e:
