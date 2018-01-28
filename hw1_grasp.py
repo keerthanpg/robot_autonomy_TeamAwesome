@@ -127,15 +127,7 @@ class RoboHandler:
           dir = -c[3:] #this is already a unit vector
           sed_term = np.cross(pos,dir)
           g = np.vstack((dir,sed_term))
-          print "sed_term"
-          print sed_term
-          print "g"
-          print g
           G = np.hstack((G,g))
-          print "one set of data"
-          print pos
-          print dir
-          print G
         #TODO use G to compute scrores as discussed in class
         Q1 = np.min(np.sqrt(np.linalg.eig(np.dot(G,G.T))[0]))
         Q2 = np.sqrt(np.linalg.det(np.dot(G,G.T)))
