@@ -131,7 +131,7 @@ class RoboHandler:
         #TODO use G to compute scrores as discussed in class
         Q1 = np.min(np.sqrt(np.linalg.eig(np.dot(G,G.T))[0]))
         Q2 = np.sqrt(np.linalg.det(np.dot(G,G.T)))
-        return 0.0 #change this
+        return (Q1+Q2)/2.)
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
@@ -170,14 +170,16 @@ class RoboHandler:
     #sample random position
     RAND_DIST_SIGMA = 0.01 #TODO you may want to change this
     pos_orig = grasp[self.graspindices['igrasppos']]
-    #TODO set a random position
 
-
+    grasp[self.graspindices['igrasppos']] = np.random.normal(pos_orig, RAND_DIST_SIGMA)
     #sample random orientation
     RAND_ANGLE_SIGMA = np.pi/24 #TODO you may want to change this
     dir_orig = grasp[self.graspindices['igraspdir']]
     roll_orig = grasp[self.graspindices['igrasproll']]
     #TODO set the direction and roll to be random
+
+    grasp[self.graspindices['igraspdir']] = np.random.normal(dir_orig, RAND_ANGLE_SIGMA)
+    grasp[self.graspindices['igrasproll']] = np.random.normal(roll_orig, RAND_ANGLE_SIGMA)
 
     return grasp
 
