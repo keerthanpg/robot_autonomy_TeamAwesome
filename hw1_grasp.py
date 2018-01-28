@@ -121,17 +121,23 @@ class RoboHandler:
 
         obj_position = self.gmodel.target.GetTransform()[0:3,3]
         # for each contact
-        G = np.array([]) #the wrench matrix
+        # G = np.array([]) #the wrench matrix
+        G = np.empty([2,0])
         for c in contacts:
           pos = c[0:3] - obj_position
           dir = -c[3:] #this is already a unit vector
           #TODO fill G
         #   g = np.array([])
           sed_term = np.cross(pos,dir)
-          print(sed_term)
-          g = np.concatenate(dir,sed_term)
+          g = np.vstack((dir,sed_term))
+          print "sed_term"
+          print sed_term
+          print "g"
           print g
-          G = np.hstack(G,g)
+          G = np.hstack((G,g))
+          print "one set of data"
+          print pos
+          print dir
           print G
         #TODO use G to compute scrores as discussed in class
 
