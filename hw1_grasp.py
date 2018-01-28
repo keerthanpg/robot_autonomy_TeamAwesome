@@ -128,7 +128,8 @@ class RoboHandler:
           #TODO fill G
         #   g = np.array([])
           sed_term = np.cross(pos,dir)
-          g = np.concatenate(dir,sed_term,axis = 0)
+          print(sed_term)
+          g = np.concatenate(dir,sed_term)
           print g
           G = np.hstack(G,g)
           print G
