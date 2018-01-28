@@ -92,6 +92,7 @@ class RoboHandler:
 
   # order the grasps - call eval grasp on each, set the 'performance' index, and sort
   def order_grasps(self):
+    print 'order_grasps'
     self.grasps_ordered = self.grasps.copy() #you should change the order of self.grasps_ordered
     for grasp in self.grasps_ordered:
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
@@ -100,10 +101,11 @@ class RoboHandler:
     order = np.argsort(self.grasps_ordered[:,self.graspindices.get('performance')[0]])
     order = order[::-1]
     self.grasps_ordered = self.grasps_ordered[order]
-
+    print 'finish_ordering'
 
   # order the grasps - but instead of evaluating the grasp, evaluate random perturbations of the grasp
   def order_grasps_noisy(self):
+    print 'noisy_order_grasp'
     self.grasps_ordered_noisy = self.grasps_ordered.copy() #you should change the order of self.grasps_ordered_noisy
     #TODO set the score with your evaluation function (over random samples) and sort
     for grasp in self.grasps_ordered_noisy:
@@ -111,10 +113,10 @@ class RoboHandler:
       grasp[self.graspindices.get('performance')] = self.eval_grasp(grasp)
 
     # sort!
-    order = np.argsort(self.grasps_ordered[:,self.graspindices.get('performance')[0]])
+    order = np.argsort(self.grasps_ordered_noisy[:,self.graspindices.get('performance')[0]])
     order = order[::-1]
-    self.grasps_ordered = self.grasps_ordered[order]
-
+    self.grasps_ordered_noisy = self.grasps_ordered_noisy[order]
+    print 'finish_ordering_noisy'
 
 
 
@@ -140,7 +142,7 @@ class RoboHandler:
         #TODO use G to compute scrores as discussed in class
         Q1 = np.min(np.sqrt(np.linalg.eig(np.dot(G,G.T))[0]))
         Q2 = np.sqrt(np.linalg.det(np.dot(G,G.T)))
-        return (Q1+Q2)/2.)
+        return ((Q1+Q2)/2.)
 
       except openravepy.planning_error,e:
         #you get here if there is a failure in planning
@@ -214,4 +216,14 @@ class RoboHandler:
 
 if __name__ == '__main__':
   robo = RoboHandler()
+  print ("IAM READYYY")
+  noisy_grasp = robo.grasps_ordered_noisy[:4]
+  normal_grasp = robo.grasps_ordered[:4]
+  for grasp in noisy_grasp:
+      print grasp
+      robo.show_grasp(grasp)
+  for grasp in normal_grasp:
+      print grasp
+      robo.show_grasp(grasp)
+
   #time.sleep(10000) #to keep the openrave window open
