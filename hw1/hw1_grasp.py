@@ -48,10 +48,10 @@ class RoboHandler:
     self.problem_init()
 
     #order grasps based on your own scoring metric
-    # self.order_grasps()
+    self.order_grasps()
 
     #order grasps with noise
-    self.order_grasps_noisy()
+    #self.order_grasps_noisy()
 
 
   # the usual initialization for openrave
@@ -67,9 +67,9 @@ class RoboHandler:
 
   # problem specific initialization - load target and grasp module
   def problem_init(self):
-    self.target_kinbody = self.env.ReadKinBodyURI('models/objects/champagne.iv')
+    #self.target_kinbody = self.env.ReadKinBodyURI('models/objects/champagne.iv')
     #self.target_kinbody = self.env.ReadKinBodyURI('models/objects/winegoblet.iv')
-    #self.target_kinbody = self.env.ReadKinBodyURI('models/objects/black_plastic_mug.iv')
+    self.target_kinbody = self.env.ReadKinBodyURI('models/objects/black_plastic_mug.iv')
 
     #change the location so it's not under the robot
     T = self.target_kinbody.GetTransform()
@@ -220,14 +220,14 @@ class RoboHandler:
 if __name__ == '__main__':
   robo = RoboHandler()
   print ("IAM READYYY")
-  noisy_grasp = robo.grasps_ordered_noisy[:4]
-  # normal_grasp = robo.grasps_ordered[:4]
-  # grasps = robo.grasps[:4]
-  # for grasp in grasps:
-  #     robo.show_grasp(grasp, delay=10)
-  for grasp in noisy_grasp:
-      print grasp
+  #noisy_grasp = robo.grasps_ordered_noisy[:4]
+  normal_grasp = robo.grasps_ordered[:4]
+  grasps = robo.grasps[:4]
+  for grasp in grasps:
       robo.show_grasp(grasp, delay=10)
+  #for grasp in noisy_grasp:
+  #    print grasp
+  #    robo.show_grasp(grasp, delay=10)
   # for grasp in normal_grasp:
   #     print grasp
   #     robo.show_grasp(grasp, delay=10)
