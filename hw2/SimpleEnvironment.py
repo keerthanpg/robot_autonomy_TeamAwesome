@@ -1,4 +1,5 @@
 import numpy
+import random
 import matplotlib.pyplot as pl
 
 class SimpleEnvironment(object):
@@ -25,7 +26,10 @@ class SimpleEnvironment(object):
         self.p = p
 
     def CheckCollision(self, config):
-        self.robot.SetActiveDOFValues(config)
+        transform = np.identity(4)
+        transform[0, 3] = config[0]
+        transform[1, 3] = config[1]
+        self.robot.SetTransform(transform)
         collide = self.robot.GetEnv().CheckCollision(self.robot)
         return collide
 
@@ -35,9 +39,11 @@ class SimpleEnvironment(object):
         #
         # TODO: Generate and return a random configuration
         #
-        config =
-
-
+        collide = True
+        while collide:
+            config[0] = random.random() * abs(lower_limits[0] - upper_limits[0]) + lower_limits[0]
+            config[1] = random.random() * abs(lower_limits[1] - upper_limits[1]) + lower_limits[1]
+            collide = self.CheckCollision(config)
         return numpy.array(config)
 
     def ComputeDistance(self, start_config, end_config):
@@ -45,7 +51,8 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which computes the distance between
         # two configurations
         #
-        pass
+        distance = np.sqrt(np.sum(np.square(start_config - end_config)))
+        return distance
 
     def Extend(self, start_config, end_config):
 
@@ -53,7 +60,16 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which attempts to extend from
         #   a start configuration to a goal configuration
         #
-        pass
+        x_coord = np.linspace(start_config[0], end_config[0], 20)
+        y_coord = np.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
+        config = start_config
+        for x, y in zip(x_coord, y_coord):
+            if not self.CheckCollision([x,y]):
+                config[0] = x
+                config[1] = y
+            else:
+                break
+        return config
 
     def ShortenPath(self, path, timeout=5.0):
 
