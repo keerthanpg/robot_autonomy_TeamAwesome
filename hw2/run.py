@@ -15,20 +15,22 @@ def main(robot, planning_env, planner):
     raw_input('Press any key to begin planning')
 
     start_config = numpy.array(robot.GetCurrentConfiguration())
+    # print start_config
     if robot.name == 'herb':
         goal_config = numpy.array([ 3.68, -1.90,  0.00,  2.20,  0.00,  0.00,  0.00 ])
     else:
         goal_config = numpy.array([2.0, -0.8])
 
     plan = planner.Plan(start_config, goal_config)
+    # print(plan)
     plan_short = planning_env.ShortenPath(plan)
     traj = robot.ConvertPlanToTrajectory(plan_short)
     robot.ExecuteTrajectory(traj)
 
 if __name__ == "__main__":
-    
+
     parser = argparse.ArgumentParser(description='script for testing planners')
-    
+
     parser.add_argument('-r', '--robot', type=str, default='simple',
                         help='The robot to load (herb or simple)')
     parser.add_argument('-p', '--planner', type=str, default='rrt',
@@ -39,10 +41,10 @@ if __name__ == "__main__":
                         help='Enable visualization of tree growth (only applicable for simple robot)')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Enable debug logging')
-    
+
 
     args = parser.parse_args()
-    
+
     openravepy.RaveInitialize(True, level=openravepy.DebugLevel.Info)
     openravepy.misc.InitOpenRAVELogging()
 
@@ -79,6 +81,3 @@ if __name__ == "__main__":
 
     import IPython
     IPython.embed()
-
-        
-    

@@ -26,11 +26,14 @@ class SimpleEnvironment(object):
         self.p = p
 
     def CheckCollision(self, config):
-        transform = np.identity(4)
+        transform = numpy.identity(4)
         transform[0, 3] = config[0]
         transform[1, 3] = config[1]
         self.robot.SetTransform(transform)
         collide = self.robot.GetEnv().CheckCollision(self.robot)
+        transform[0, 3] = -config[0]
+        transform[1, 3] = -config[1]
+        self.robot.SetTransform(transform)
         return collide
 
     def GenerateRandomConfiguration(self):
@@ -51,7 +54,7 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which computes the distance between
         # two configurations
         #
-        distance = np.sqrt(np.sum(np.square(start_config - end_config)))
+        distance = numpy.sqrt(numpy.sum(numpy.square(start_config - end_config)))
         return distance
 
     def Extend(self, start_config, end_config):
@@ -60,9 +63,9 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which attempts to extend from
         #   a start configuration to a goal configuration
         #
-        x_coord = np.linspace(start_config[0], end_config[0], 20)
-        y_coord = np.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
-        config = start_config
+        x_coord = numpy.linspace(start_config[0], end_config[0], 100)
+        y_coord = numpy.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
+        config = numpy.copy(start_config)
         for x, y in zip(x_coord, y_coord):
             if not self.CheckCollision([x,y]):
                 config[0] = x
@@ -111,5 +114,5 @@ class SimpleEnvironment(object):
     def PlotEdge(self, sconfig, econfig):
         pl.plot([sconfig[0], econfig[0]],
                 [sconfig[1], econfig[1]],
-                'k.-', linewidth=2.5)
+                'k.-', linewidth=2.0)
         pl.draw()
