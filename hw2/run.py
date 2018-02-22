@@ -25,6 +25,7 @@ def main(robot, planning_env, planner):
     # print(plan)
     plan_short = planning_env.ShortenPath(plan)
     traj = robot.ConvertPlanToTrajectory(plan_short)
+
     robot.ExecuteTrajectory(traj)
 
 if __name__ == "__main__":
@@ -79,5 +80,5 @@ if __name__ == "__main__":
 
     main(robot, planning_env, planner)
 
-    import IPython
-    IPython.embed()
+    # import IPython
+    # IPython.embed()

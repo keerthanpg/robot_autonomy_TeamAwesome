@@ -45,19 +45,16 @@ class RRTPlanner(object):
 
             # Check how close we are to the goal
             dist = self.planning_env.ComputeDistance(q_c, goal_config)
-
+            # print q_n
+            # print q_c
             if self.visualize:
-                # print q_n
-                # print q_c
                 self.planning_env.PlotEdge(q_n, q_c)
 
-
-        # plan.append(start_config)
-        # plan.append(goal_config)
         vid = eid
         while (vid != tree.GetRootId()):
             vid = tree.edges[vid]
             plan = [tree.vertices[vid]] + plan
 
         plan.append(goal_config)
+        # print len(plan)
         return plan

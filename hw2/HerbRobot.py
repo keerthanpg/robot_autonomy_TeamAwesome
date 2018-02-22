@@ -9,11 +9,11 @@ class HerbRobot(object):
 
         right_relaxed = [ 5.65, -1.76, -0.26,  1.96, -1.15 , 0.87, -1.43 ]
         left_relaxed = [ 0.64, -1.76,  0.26,  1.96,  1.16,  0.87,  1.43 ]
-        
+
         right_manip = self.robot.GetManipulator('right_wam')
         self.robot.SetActiveDOFs(right_manip.GetArmIndices())
         self.robot.SetActiveDOFValues(right_relaxed)
-        
+
         left_manip = self.robot.GetManipulator('left_wam')
         self.robot.SetActiveDOFs(left_manip.GetArmIndices())
         self.robot.SetActiveDOFValues(left_relaxed)
@@ -26,17 +26,20 @@ class HerbRobot(object):
             self.robot.SetActiveManipulator('left_wam')
 
         self.robot.SetActiveDOFs(self.manip.GetArmIndices())
-    
+
+        # print self.robot.GetActiveDOFValues()
+
         self.robot.controller = openravepy.RaveCreateController(self.robot.GetEnv(), 'IdealController')
 
     def GetCurrentConfiguration(self):
         return self.robot.GetActiveDOFValues()
 
     def ConvertPlanToTrajectory(self, plan):
-        
+
         # Create a trajectory
         traj = openravepy.RaveCreateTrajectory(self.robot.GetEnv(), 'GenericTrajectory')
         config_spec = self.robot.GetActiveConfigurationSpecification()
+        # print config_spec
         traj.Init(config_spec)
 
         idx = 0
@@ -44,10 +47,13 @@ class HerbRobot(object):
             traj.Insert(idx, pt)
             idx = idx + 1
 
-        openravepy.planningutils.RetimeActiveDOFTrajectory(traj, self.robot, maxvelmult=1, maxaccelmult=1, hastimestamps=False, plannername='ParabolicTrajectoryRetimer')
+        planned = openravepy.planningutils.RetimeActiveDOFTrajectory(traj, self.robot, maxvelmult=1, maxaccelmult=1, hastimestamps=False, plannername='ParabolicTrajectoryRetimer')
+        if not planned:
+            raise Exception("Planner Failed")
 
+        # print config_spec.ExtractDeltaTime(end)
         return traj
-        
+
     def ExecuteTrajectory(self, traj):
 
         # Send the trajectory to the controller and wait for execution to complete

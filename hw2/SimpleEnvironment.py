@@ -26,14 +26,15 @@ class SimpleEnvironment(object):
         self.p = p
 
     def CheckCollision(self, config):
-        transform = numpy.identity(4)
-        transform[0, 3] = config[0]
-        transform[1, 3] = config[1]
-        self.robot.SetTransform(transform)
-        collide = self.robot.GetEnv().CheckCollision(self.robot)
-        transform[0, 3] = -config[0]
-        transform[1, 3] = -config[1]
-        self.robot.SetTransform(transform)
+        with self.robot:
+            transform = numpy.identity(4)
+            transform[0, 3] = config[0]
+            transform[1, 3] = config[1]
+            self.robot.SetTransform(transform)
+            collide = self.robot.GetEnv().CheckCollision(self.robot)
+        # transform[0, 3] = -config[0]
+        # transform[1, 3] = -config[1]
+        # self.robot.SetTransform(transform)
         return collide
 
     def GenerateRandomConfiguration(self):
