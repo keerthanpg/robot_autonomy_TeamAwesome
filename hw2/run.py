@@ -21,10 +21,17 @@ def main(robot, planning_env, planner):
     else:
         goal_config = numpy.array([2.0, -0.8])
 
+    startTime = time.time()
     plan = planner.Plan(start_config, goal_config)
-    print(plan)
+    endTime = time.time()
+    print("Plan time:")
+    print(endTime - startTime)
+    print("Num Vertices")
+    print(len(plan))
     plan_short = planning_env.ShortenPath(plan)
-    traj = robot.ConvertPlanToTrajectory(plan_short)
+
+    
+    traj = robot.ConvertPlanToTrajectory(plan)
 
     robot.ExecuteTrajectory(traj)
 
