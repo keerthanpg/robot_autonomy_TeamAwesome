@@ -26,15 +26,17 @@ class RRTConnectPlanner(object):
 
         #RRT
         dist = float('inf')
-
+        count = 0
         while dist > epsilon:
             # Bias Sampling with P of sampling towards the Goal = 0.1
-            p = random.random()
-            if p < 0.1:
-                f_q_r = goal_config
+            if not count % 2:
+                p = random.random()
+                if p < 0.1:
+                    f_q_r = goal_config
+                else:
+                    f_q_r = self.planning_env.GenerateRandomConfiguration()
             else:
-                f_q_r = self.planning_env.GenerateRandomConfiguration()
-
+                f_q_r = numpy.copy(r_q_c)
             # Get the Vertex closest to q_r
             f_sid, f_q_n = ftree.GetNearestVertex(f_q_r)
 
@@ -50,7 +52,16 @@ class RRTConnectPlanner(object):
             if self.visualize:
                 self.planning_env.PlotEdge(f_q_n, f_q_c)
 
-            r_q_r = numpy.copy(f_q_c)
+            if count % 2:
+                p = random.random()
+                if p < 0.1:
+                    r_q_r = start_config
+                else:
+                    r_q_r = self.planning_env.GenerateRandomConfiguration()
+            else:
+                r_q_r = numpy.copy(f_q_c)
+
+            # r_q_r = numpy.copy(f_q_c)
             #for reverse tree
             r_sid, r_q_n = rtree.GetNearestVertex(r_q_r)
 
@@ -70,6 +81,7 @@ class RRTConnectPlanner(object):
 
             # Check how close we are to the goal
             dist = self.planning_env.ComputeDistance(f_q_c, r_q_c)
+            count += 1
             print(dist)
             # print q_n
             print f_q_c, f_q_n, r_q_c, r_q_n, r_q_r
