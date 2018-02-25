@@ -30,7 +30,13 @@ def main(robot, planning_env, planner):
     print(len(plan))
     plan_short = planning_env.ShortenPath(plan)
 
-    
+    totDistance = 0
+    for i in range(0, len(plan)-1):
+	ithDistance = numpy.sqrt(numpy.sum(numpy.square(plan[i+1]-plan[i])))
+ 	totDistance = totDistance + ithDistance
+    print("Path Length")
+    print(totDistance)    
+
     traj = robot.ConvertPlanToTrajectory(plan)
 
     robot.ExecuteTrajectory(traj)
