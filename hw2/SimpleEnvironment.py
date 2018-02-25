@@ -64,7 +64,7 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which attempts to extend from
         #   a start configuration to a goal configuration
         #
-        x_coord = numpy.linspace(start_config[0], end_config[0], 100)
+        x_coord = numpy.linspace(start_config[0], end_config[0], 500)
         y_coord = numpy.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
         config = numpy.copy(start_config)
         for x, y in zip(x_coord, y_coord):

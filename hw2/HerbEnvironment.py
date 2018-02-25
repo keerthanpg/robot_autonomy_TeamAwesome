@@ -90,7 +90,7 @@ class HerbEnvironment(object):
         # y_coord = numpy.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
         # number of interpolate points
         dof = len(self.robot.GetActiveDOFIndices())
-        num = 500
+        num = 3000
         positions = numpy.zeros((dof,num))
         positions[0,:] = numpy.linspace(start_config[0], end_config[0], num)
         for i in range(1,dof):
