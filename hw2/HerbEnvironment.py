@@ -90,11 +90,11 @@ class HerbEnvironment(object):
         # y_coord = numpy.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
         # number of interpolate points
         dof = len(self.robot.GetActiveDOFIndices())
-        num = 3000
+        num = 300
         positions = numpy.zeros((dof,num))
-        positions[0,:] = numpy.linspace(start_config[0], end_config[0], num)
-        for i in range(1,dof):
-            positions[i,:] = numpy.interp(positions[0,:] , [start_config[0], end_config[0]], [start_config[i], end_config[i]])
+        # positions[0,:] = numpy.linspace(start_config[0], end_config[0], num)
+        for i in range(dof):
+            positions[i,:] = numpy.linspace(start_config[i], end_config[i], num)
 
         config = numpy.copy(start_config)
         for i in range(num):
@@ -106,69 +106,69 @@ class HerbEnvironment(object):
 
     def ShortenPath(self, path, timeout=5.0):
 	startTime = time.time();
-        
+
 	#if path has less than three points, it's already as short as possible
 	if(len(path) < 3):
 		return path
 	while(time.time() - startTime < timeout):
 		#print(path)
 		pathLength = len(path);
-		
+
 		'''
 		oldDistance = 0
 		for i in range(0, len(path)-1):
 			ithDistance = self.ComputeDistance(path[i], path[i+1])
 			oldDistance = oldDistance + ithDistance
-		
+
 		print(oldDistance)'''
 
 		seg1_start = 0
 		seg2_start = 0
 		while not(seg1_start < seg2_start):
-			seg1_start = random.randint(0, pathLength-2)	
+			seg1_start = random.randint(0, pathLength-2)
 			seg2_start = random.randint(0, pathLength-2)
 		seg1_start_config = path[seg1_start]
 		seg1_end_config = path[seg1_start+1]
 		seg2_start_config = path[seg2_start]
 		seg2_end_config = path[seg2_start+1]
-	
+
 		dof = len(self.robot.GetActiveDOFIndices())
         	num = 500
-        	
+
 		seg1_positions = numpy.zeros((dof,num))
         	seg2_positions = numpy.zeros((dof,num))
-        	
+
 		seg1_positions[0,:] = numpy.linspace(seg1_start_config[0], seg1_end_config[0], num)
         	seg2_positions[0,:] = numpy.linspace(seg1_start_config[0], seg1_end_config[0], num)
-        	
+
 		for i in range(1,dof):
             		seg1_positions[i,:] = numpy.interp(seg1_positions[0,:] , [seg1_start_config[0], seg1_end_config[0]], [seg1_start_config[i], seg1_end_config[i]])
         		#print(len(seg2_end_config))
 			#print(len(seg2_start_config))
 	    		seg2_positions[i,:] = numpy.interp(seg2_positions[0,:] , [seg2_start_config[0], seg2_end_config[0]], [seg2_start_config[i], seg2_end_config[i]])
 
-		randA = random.randint(0, num - 1) 
-		randB = random.randint(0, num - 1) 
-		
+		randA = random.randint(0, num - 1)
+		randB = random.randint(0, num - 1)
+
 		posA = seg1_positions[:, randA]
 		posB = seg2_positions[:, randB]
-		
+
 		if (numpy.array_equal(posB, self.Extend(posA, posB))):
 			newPath = path[0:(seg1_start+1)]
 			newPath.append(posA)
 			newPath.append(posB)
 			newPath.extend(path[(seg2_start+1):len(path)])
-			
+
 			oldDistance = 0
 			for i in range(0, len(path)-1):
 				ithDistance = self.ComputeDistance(path[i], path[i+1])
 				oldDistance = oldDistance + ithDistance
-	
+
 			newDistance = 0
 			for i in range(0, len(newPath)-1):
 				ithDistance = self.ComputeDistance(newPath[i], newPath[i+1])
-				newDistance = newDistance + ithDistance			
-			
+				newDistance = newDistance + ithDistance
+
 			if(oldDistance > newDistance):
 				path = newPath
 			'''print("Start seg 1")
@@ -183,7 +183,7 @@ class HerbEnvironment(object):
 			print(posB)
 			print("newPath")
 			print(newPath)'''
-			
+
 
 
 	return path

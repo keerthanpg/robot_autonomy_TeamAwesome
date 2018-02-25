@@ -7,10 +7,10 @@ class RRTConnectPlanner(object):
     def __init__(self, planning_env, visualize):
         self.planning_env = planning_env
         self.visualize = visualize
-        
+
 
     def Plan(self, start_config, goal_config, epsilon = 0.001):
-        
+
         ftree = RRTTree(self.planning_env, start_config)
         rtree = RRTTree(self.planning_env, goal_config)
         plan = []
@@ -23,7 +23,7 @@ class RRTConnectPlanner(object):
         #  and n is the dimension of the robots configuration space
 
         #plan.append(start_config)
-        
+
         #RRT
         dist = float('inf')
 
@@ -49,30 +49,31 @@ class RRTConnectPlanner(object):
 
             if self.visualize:
                 self.planning_env.PlotEdge(f_q_n, f_q_c)
-            
-            
+
+            r_q_r = numpy.copy(f_q_c)
             #for reverse tree
-            r_sid, r_q_n = rtree.GetNearestVertex(f_q_c)
+            r_sid, r_q_n = rtree.GetNearestVertex(r_q_r)
 
             # Using linear interpolation to get the furthest vertex without collision
-            r_q_c = self.planning_env.Extend(r_q_n, f_q_c)  
+            r_q_c = self.planning_env.Extend(r_q_n, r_q_r)
 
             if(numpy.array_equal(r_q_n,r_q_c)):
                 print("collision")
 
-                
+
             # Add vertex to the r tree
             r_eid = rtree.AddVertex(r_q_c)
 
             # Add an edge on the r tree
             rtree.AddEdge(r_sid, r_eid)
-            
+
 
             # Check how close we are to the goal
             dist = self.planning_env.ComputeDistance(f_q_c, r_q_c)
             print(dist)
             # print q_n
-            print f_q_c, f_q_n, r_q_c, r_q_n 
+            print f_q_c, f_q_n, r_q_c, r_q_n, r_q_r
+            print rtree, ftree
             if self.visualize:
                 self.planning_env.PlotEdge(r_q_n, r_q_c)
 
@@ -81,13 +82,13 @@ class RRTConnectPlanner(object):
         while (vid != ftree.GetRootId()):
             plan = [ftree.vertices[vid]] + plan
             vid = ftree.edges[vid]
-            
+
         vid = r_eid
         while (vid != rtree.GetRootId()):
             vid = rtree.edges[vid]
-            plan = plan + [rtree.vertices[vid]]           
+            plan = plan + [rtree.vertices[vid]]
 
         plan.append(goal_config)
         print("finished adding plan")
-        print plan        
+        print plan
         return plan

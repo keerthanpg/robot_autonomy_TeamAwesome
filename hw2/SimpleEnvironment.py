@@ -26,6 +26,7 @@ class SimpleEnvironment(object):
         self.p = p
 
     def CheckCollision(self, config):
+        collide = False
         with self.robot:
             transform = numpy.identity(4)
             transform[0, 3] = config[0]
@@ -64,10 +65,18 @@ class SimpleEnvironment(object):
         # TODO: Implement a function which attempts to extend from
         #   a start configuration to a goal configuration
         #
-        x_coord = numpy.linspace(start_config[0], end_config[0], 500)
-        y_coord = numpy.interp(x_coord, [start_config[0], end_config[0]], [start_config[1], end_config[1]])
+        xp = numpy.array([start_config[0], end_config[0]])
+        # if not np.all(np.diff(xp) > 0):
+        num_points = 100
+        x_coord = numpy.linspace(start_config[0], end_config[0], num_points)
+        y_coord = numpy.linspace(start_config[1], end_config[1], num_points)
+        # print start_config
+        # print end_config
+        # print y_coord
+        # print x_coord
         config = numpy.copy(start_config)
         for x, y in zip(x_coord, y_coord):
+            # print x, y
             if not self.CheckCollision([x,y]):
                 config[0] = x
                 config[1] = y
